@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta29
 kind: Config
 
 metadata:
-  name: popular-slides
+  name: popular-slides-sk
 
 build:
   artifacts:
