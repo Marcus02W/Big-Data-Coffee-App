@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../staticFiles/style_index.css">
+    <script type="text/javascript" src="../staticFiles/admin_page_handler.js"></script>
+</head>
+<body>
+    <div class="header">
+        <a href='/start'><img src="../staticFiles/home.png" alt="Home" style="width:50px; height: 50px;"></a>
+    </div>
+    <div class="container">
+        <h1>Admin Page</h1>
+            <div class="page-div">
+                <label>Fast-Calc:</label>
+                <select id="drop_req">
+                    <option value="none">none</option>
+                    <option value="AVG-Rating-Mat-view">AVG-Rating-Mat-view</option>
+                    <option value="worst-rating">worst-rating</option>
+                    <option value="Cross-types-shops">Cross-types-shops</option>
+                </select>
+                <button id="btn" type="button" onclick="sql_drop_req()">submit</button>
+
+                <label>SQL-Tabels:</label>
+                <select id="drop">
+                    <option value="none">none</option>
+                    <option value="shop_login">shops_login</option>
+                    <option value="coffee_shops">coffe_shops</option>
+                    <option value="coffee_types">coffe_types</option>
+                    <option value="ratings">ratings</option>
+                    <option value="orders">order</option>
+                    <option value="orderitem">order_item</option>
+                    <option value="customers">customers</option>
+                    <option value="customer_login">customer_login</option>
+                </select>
+                <button id="btn" type="button" onclick="sql_tabels()">submit</button>
+                <label>SQL-Input:</label>
+                <input type="text" name="sql-querry" id="querry"/>
+                <button id="btn" type="button" onclick="sql_querry()">submit</button>
+            </div>
+            <div id="response"></div>
+    </div>
+</body>
+</html>

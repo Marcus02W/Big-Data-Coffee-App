@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+
+    <head>
+        <link rel="stylesheet" href="../staticFiles/Login.css">
+        <script type="text/javascript" src="../staticFiles/LoginHandler.js"></script>
+    </head>
+
+    <body>
+
+        <div class="full_container">
+            <div class="imgcontainer">
+                <img src="../staticFiles/profile_picture.png" alt="Avatar" class="avatar">
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Username</b></label>
+                <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
+
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+
+                <button type="button" onclick="login()">Login</button>
+                <div class="response_container"><p id="response"></p><br><br><a id="signup_link" href="/signup">Not registered yet? Sign up!</a></div>
+                <!--
+                <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+                </label>
+                -->
+            </div>
+        </div>
+
+
+    </body>
+
+
+</html>

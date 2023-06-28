@@ -1,0 +1,38 @@
+Next steps:
+
+==== login logic aspects (mostly done and all important things resolved) ====
+
+# The logic has been mostly implemented for customer_landing_page and can be implemented in the same way in the future!
+
+    -> onload-function that checks whether cookie is set and valid (redirects to login page if cookie is not valid!)
+    => important: for security reasons the cookie has to be checked before every database access by the backend, 
+    because the javascript could be manipulated
+    (this could happen sort of automatically when sending along username and password in each http request
+    and then using a join of the login table and the other needed table in the SQL query)
+
+# Should be working due to overwriting of cookie
+    Important: 
+    Implement a mechanism that prevents multiple users being logged in at the same time!
+    => Should already be working by default probably?
+
+=> logout functionality could be thought about
+
+
+==== things that need to be implemented and tested ====
+
+=> implement seperate login and signup page for coffe shops with same logic
+
+=> implement starting page
+
+=> complete all queries for the overview pages and test them
+
+=> create admin page where everything can be edited in a table editor format (also good for tesing purposes to have an easy overview over whole database basically)
+
+=> create seperate sub pages for editing the content displayed on the overview page (&displaying the whole content scrollable of course)
+(only for the customer overview though -> and only for creating orders, for coffee shops you can put all on the overview page)
+
+
+
+
+
+
