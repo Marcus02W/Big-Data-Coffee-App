@@ -3,7 +3,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 
 dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306'
-dbOptions = {"user": "root", "password": "mysecretpw"}
+dbOptions = {"user": "root", "password": "mysecretpw", "driver": "com.mysql.jdbc.Driver","isolationLevel": "READ_COMMITTED"}
 dbSchema = 'popular'
 tableName = 'popular'
 
