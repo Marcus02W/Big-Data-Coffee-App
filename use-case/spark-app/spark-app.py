@@ -68,11 +68,11 @@ popular = trackingMessages.groupBy(
 
 # Example Part 5
 # Start running the query; print running counts to the console
-consoleDump = popular \
-    .writeStream \
-    .outputMode("update") \
-    .format("console") \
-    .start()
+# consoleDump = popular \
+#     .writeStream \
+#     .outputMode("update") \
+#     .format("console") \
+#     .start()
 
 # Example Part 6
 def saveToDatabase(batchDataframe, batchId):
