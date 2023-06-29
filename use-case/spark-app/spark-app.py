@@ -5,6 +5,7 @@ from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306'
 dbOptions = {"user": "root", "password": "mysecretpw"}
 dbSchema = 'popular'
+tableName = 'popular'
 
 windowDuration = '1 minute'
 slidingDuration = '1 minute'
@@ -78,7 +79,7 @@ popular = trackingMessages.groupBy(
 def saveToDatabase(batchDataframe, batchId):
     global dbUrl, dbSchema, dbOptions
     print(f"Writing batchID {batchId} to database @ {dbUrl}")
-    batchDataframe.distinct().write.jdbc(dbUrl, dbSchema, "overwrite", dbOptions)
+    batchDataframe.distinct().write.jdbc(dbUrl, f"{dbSchema}.{tableName}", "overwrite", dbOptions)
 
 
 # Example Part 7
