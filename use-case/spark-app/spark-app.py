@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 
-dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306/popular'
+dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306'
 dbOptions = {"user": "root", "password": "mysecretpw"}
 dbSchema = 'popular'
 
