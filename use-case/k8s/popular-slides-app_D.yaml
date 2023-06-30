@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: coffee-db-kube # Replace with the image tag of your Flask app
+          image: fahrberg/popular-slides # Replace with the image tag of your Flask app
           ports:
             - containerPort: 3000
           env:
