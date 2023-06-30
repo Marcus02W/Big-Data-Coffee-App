@@ -6,8 +6,7 @@ dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432/coffee_db'
 dbOptions = {
     "user": "coffee_db_technical_user",
     "password": "coffeedb",
-    "driver": "org.postgresql.Driver",
-    "isolationLevel": "READ_COMMITTED"
+    "driver": "org.postgresql.Driver"
 }
 dbSchema = 'public'
 tableName = 'coffee_types'
