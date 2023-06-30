@@ -1,0 +1,84 @@
+@font-face {
+  font-family: 'Coffe';
+  src: url('AdrenalinesDemoRegular.ttf') format('truetype');
+  /* Weitere Formate, z.B. woff, woff2, können hinzugefügt werden */
+}
+body {
+  font-family: 'Coffe', sans-serif;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.row div {
+  flex: 1;
+  padding: 5px;
+}
+
+.row input {
+  width: 50px;
+  text-align: center;
+}
+
+.row .quantity-control {
+  display: flex;
+  align-items: center;
+}
+
+.row .quantity-control button {
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  border-radius: 50%;
+  border: none;
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.row .quantity-control button:hover {
+  background-color: gray;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-container button:hover {
+  background-color: darkorange;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 20px;
+  height: 10%;
+}

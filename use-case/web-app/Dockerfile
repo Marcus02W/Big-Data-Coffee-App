@@ -1,20 +1,10 @@
-FROM node:slim
-LABEL maintainer="Dennis Pfisterer, http://dennis-pfisterer.de"
+FROM python:3.9-slim-buster
 
-# Set node environment, either development or production
-ARG NODE_ENV=production
-ENV NODE_ENV $NODE_ENV
-
-# Install dependencies
 WORKDIR /app
-COPY package.json package-lock.json /app/
-RUN npm install --no-optional && npm cache clean --force
-RUN npm install pg
 
-# Install app
-COPY *.js /app/
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
-# Export app port and set entrypoint at startup
-EXPOSE 3000
-ENTRYPOINT ["node", "index.js"]
-CMD [""]
+COPY . .
+
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]

@@ -2,15 +2,15 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 
-dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432/coffee-db'
+dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432/coffee_db'
 dbOptions = {
-    "user": "myuser",
-    "password": "mypassword",
+    "user": "coffee_db_technical_user",
+    "password": "coffeedb",
     "driver": "org.postgresql.Driver",
     "isolationLevel": "READ_COMMITTED"
 }
 dbSchema = 'public'
-tableName = 'my-table'
+tableName = 'customers'
 
 
 

@@ -1,23 +1,28 @@
-#Begin: Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: popular-slides
+  name: flask-app
   labels:
-    app: popular-slides
+    app: flask-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: popular-slides-web
-      
+      app: flask-app
   template:
     metadata:
       labels:
-        app: popular-slides-web
+        app: flask-app
     spec:
       containers:
-        - name: popular-slides-web
-          image: farberg/popular-slides
+        - name: flask-app
+          image: coffee-db-kube # Replace with the image tag of your Flask app
           ports:
-            - containerPort: 3000
+            - containerPort: 5000
+          env:
+            - name: FLASK_APP
+              value: backend.py
+            - name: FLASK_RUN_HOST
+              value: "0.0.0.0"
+            - name: DATABASE_URL
+              value: "jdbc:postgresql://my-app-postgres-service:5432/coffee-db"

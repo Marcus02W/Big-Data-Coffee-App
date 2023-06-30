@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+
+    <head>
+        <link rel="stylesheet" href="../staticFiles/Signup.css">
+        <script type="text/javascript" src="../staticFiles/SignupHandlerCoffeeShop.js"></script>
+    </head>
+
+    <body>
+        <div class="header">
+            <a href='/start'><img src="../staticFiles/home.png" alt="Home" style="width:50px; height: 50px;"></a>
+        </div>
+
+        <div class="full_container">
+            <div class="imgcontainer">
+                <img src="../staticFiles/profile_picture.png" alt="Avatar" class="avatar">
+            </div>
+
+            <div class="container">
+                <label for="id"><b>shop id</b></label>
+                <input type="text" placeholder="Enter your shop id" name="id" id="id" required>
+
+                <label for="name"><b>name</b></label>
+                <input type="text" placeholder="Enter the name of your shop" name="name" id="name" required>
+
+                <label for="country"><b>country</b></label>
+                <input type="text" placeholder="Enter the country your shop is located in" name="country" id="country" required>
+
+                <label for="city"><b>city</b></label>
+                <input type="text" placeholder="Enter the city your shop is located in" name="city" id="city" required>
+
+                <label for="adress"><b>street</b></label>
+                <input type="text" placeholder="Enter your street" name="adress" id="adress" required>
+
+                <label for="owner_firstname"><b>firstname</b></label>
+                <input type="text" placeholder="Enter your firstname" name="owner_firstname" id="owner_firstname" required>
+
+                <label for="owner_lastname"><b>lastname</b></label>
+                <input type="text" placeholder="Enter your lastname" name="owner_lastname" id="owner_lastname" required>
+
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+
+                <button type="button" onclick="signup()">Register</button>
+                <div class="response_container"><p id="response"></p><br><br><a id="login_link" href="/login_coffee_shop">Move on to login page</a></div>
+            </div>
+        </div>
+
+
+    </body>
+
+
+</html>

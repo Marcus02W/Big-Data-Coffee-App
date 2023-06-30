@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Coffe';
+    src: url('AdrenalinesDemoRegular.ttf') format('truetype');
+    /* Weitere Formate, z.B. woff, woff2, können hinzugefügt werden */
+  }
+ 
+  body {
+    background-color: #f4f4f4;
+    font-family: 'Coffe', sans-serif; /* Verwende die Schriftart im Body oder anderen Elementen */
+  }
+
+  .header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px;
+    height: 10%;
+}
+  
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .page-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+#btn{
+  font-family: 'Coffe', sans-serif;
+  background-color: #ffffff;
+}

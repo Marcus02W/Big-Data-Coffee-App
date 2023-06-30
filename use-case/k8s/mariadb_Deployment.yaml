@@ -26,10 +26,10 @@ spec:
               mountPath: /docker-entrypoint-initdb.d/
           env:
             - name: POSTGRES_USER
-              value: "myuser"
+              value: "coffee_db_technical_user"
             - name: POSTGRES_PASSWORD
-              value: "mypassword"
+              value: "coffeedb"
             - name: POSTGRES_DB
-              value: "coffee-db"
+              value: "coffee_db"
           ports:
             - containerPort: 5432
