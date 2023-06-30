@@ -24,13 +24,14 @@ ENV POSTGRES_DB_VERSION "42.2.24"
 RUN ${IVY_CMD} -dependency "org.postgresql" "postgresql" "${POSTGRES_DB_VERSION}"
 
 
-# Install the PostgreSQL driver
-RUN apt-get update && \
-    apt-get install -y wget && \
-    wget -P /jdbc "https://jdbc.postgresql.org/download/postgresql-${POSTGRES_DB_VERSION}.jar"
+# Copy the JDBC driver JAR file
+COPY --from=jdbc-driver-installer /jdbc/postgresql-${POSTGRES_DB_VERSION}.jar /app/jars/
 
-# Set the environment variables
+# Set the environment variable for the JDBC driver
+ENV SPARK_CLASSPATH=/app/jars/postgresql-${POSTGRES_DB_VERSION}.jar
 ENV JDBC_JAR_FILE "/jdbc/postgresql-${POSTGRES_DB_VERSION}.jar"
+
+
 
 
 
