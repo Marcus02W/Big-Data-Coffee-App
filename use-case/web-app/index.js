@@ -153,10 +153,10 @@ async function sendTrackingMessage(data) {
 // Main method
 // -------------------------------------------------------
 // Route handler for the root URL
-app.get('/', (req, res) => {
+app.get('/hello', (req, res) => {
 	res.send('hello');
   });
-  
+
 app.listen(options.port, function () {
 	console.log("Node app is running at http://localhost:" + options.port)
 });
