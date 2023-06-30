@@ -56,7 +56,7 @@ trackingMessageSchema = StructType() \
 def saveToDatabase(batchDataframe, batchId):
     global dbUrl, dbSchema, dbOptions
     print(f"Writing batchID {batchId} to database @ {dbUrl}")
-    batchDataframe.distinct().write.jdbc(dbUrl, f"{dbSchema}.{tableName}", "overwrite", dbOptions)
+    batchDataframe.distinct().write.jdbc(dbUrl, f"{dbSchema}.{tableName}", "append", dbOptions)
 
 # test write
 schema = StructType([
