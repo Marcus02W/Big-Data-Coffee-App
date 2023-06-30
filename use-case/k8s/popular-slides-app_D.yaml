@@ -25,4 +25,4 @@ spec:
           - name: FLASK_RUN_HOST
             value: "0.0.0.0"
           - name: DATABASE_URL
-            value: "jdbc:postgresql://my-app-postgres-service:5432/coffee-db"
+            value: "jdbc:postgresql://my-app-postgres-service:5432/coffee_db"
