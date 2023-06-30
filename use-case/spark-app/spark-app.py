@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType, StructField
 
-dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432'
+dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432/coffee_db'
 dbOptions = {
     "user": "coffee_db_technical_user",
     "password": "coffeedb",
