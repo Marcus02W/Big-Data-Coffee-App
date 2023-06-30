@@ -22,10 +22,7 @@ RUN ${IVY_CMD} -dependency "org.apache.spark" "spark-streaming-kafka-0-10-assemb
 # Dependencies for database connection
 ENV POSTGRES_DB_VERSION "42.2.24"
 RUN ${IVY_CMD} -dependency "org.postgresql" "postgresql" "${POSTGRES_DB_VERSION}"
-FROM python:3.9-slim-buster
 
-# Set the PostgreSQL driver version
-ENV POSTGRES_DB_VERSION "42.2.24"
 
 # Install the PostgreSQL driver
 RUN apt-get update && \
