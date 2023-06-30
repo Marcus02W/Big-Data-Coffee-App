@@ -22,7 +22,19 @@ RUN ${IVY_CMD} -dependency "org.apache.spark" "spark-streaming-kafka-0-10-assemb
 # Dependencies for database connection
 ENV POSTGRES_DB_VERSION "42.2.24"
 RUN ${IVY_CMD} -dependency "org.postgresql" "postgresql" "${POSTGRES_DB_VERSION}"
-ENV JDBC_JAR_FILE "${EXTRA_JAR_PATH}/postgresql-${POSTGRES_DB_VERSION}.jar"
+FROM python:3.9-slim-buster
+
+# Set the PostgreSQL driver version
+ENV POSTGRES_DB_VERSION "42.2.24"
+
+# Install the PostgreSQL driver
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget -P /jdbc "https://jdbc.postgresql.org/download/postgresql-${POSTGRES_DB_VERSION}.jar"
+
+# Set the environment variables
+ENV JDBC_JAR_FILE "/jdbc/postgresql-${POSTGRES_DB_VERSION}.jar"
+
 
 
 # Delete temp dir
