@@ -9,11 +9,12 @@ RUN apk --update add \
 WORKDIR /app
 
 # Copy the necessary files for building the Flask app image
-COPY app/requirements.txt .
-COPY app/. .
+COPY requirements.txt .
+COPY ./. .
 
 # Install the Flask app dependencies
 RUN pip3 install -r requirements.txt
 
-# Build the Flask app image
-RUN docker build -t my-flask-app:1.0 .
+EXPOSE 3000
+ENTRYPOINT ["flask", "backend.py"]
+CMD [""]

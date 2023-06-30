@@ -14,18 +14,11 @@ spec:
       labels:
         app: flask-app
     spec:
-      initContainers:
-      - name: image-builder
-        image: docker:latest
-        command: ["sh", "-c", "docker build -t my-flask-app:1.0 ."]
-        volumeMounts:
-        - name: app-volume
-          mountPath: /app
       containers:
       - name: flask-app
-        image: my-flask-app:1.0
+        image: my-flask-app
         ports:
-        - containerPort: §000
+        - containerPort: 3000
           env:
             - name: FLASK_APP
               value: backend.py
