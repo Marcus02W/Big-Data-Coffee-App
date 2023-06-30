@@ -6,7 +6,7 @@ metadata:
 
 build:
   artifacts:
-    - image: farberg/popular-slides
+    - image: my-flask-app:1.0
       context: web-app
 
     - image: farberg/popular-slides-spark
