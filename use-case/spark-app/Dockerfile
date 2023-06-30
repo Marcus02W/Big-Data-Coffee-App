@@ -20,9 +20,10 @@ RUN ${IVY_CMD} -dependency "org.apache.spark" "spark-sql-kafka-0-10_2.12" "${SPA
 RUN ${IVY_CMD} -dependency "org.apache.spark" "spark-streaming-kafka-0-10-assembly_2.12" "${SPARK_VERSION}"
 
 # Dependencies for database connection
-ENV MYSQL_DB_VERSION "8.0.30"
-RUN ${IVY_CMD} -dependency "mysql" "mysql-connector-java" "${MYSQL_DB_VERSION}"
-ENV JDBC_JAR_FILE "${EXTRA_JAR_PATH}/mysql-connector-java-${MYSQL_DB_VERSION}.jar"
+ENV POSTGRES_DB_VERSION "42.2.24"
+RUN ${IVY_CMD} -dependency "org.postgresql" "postgresql" "${POSTGRES_DB_VERSION}"
+ENV JDBC_JAR_FILE "${EXTRA_JAR_PATH}/postgresql-${POSTGRES_DB_VERSION}.jar"
+
 
 # Delete temp dir
 RUN rm -rf ${IVY_PACKAGE_DIR}
@@ -56,16 +57,16 @@ WORKDIR /app
 #	/tmp/empty.py ; rm -f /tmp/empty.py
 
 # Prepare the app's python dependencies
-#ADD --chown=spark:spark requirements.txt /app/
-#RUN pip install --no-cache-dir -t /app/dependencies -r requirements.txt
-#RUN echo -e "Contents of /app/dependencies:\n" ; find /app/dependencies
+ADD --chown=spark:spark requirements.txt /app/
+RUN pip install --no-cache-dir -t /app/dependencies -r requirements.txt
+RUN echo -e "Contents of /app/dependencies:\n" ; find /app/dependencies
 
 # Zip all dependencies
-#WORKDIR /app/dependencies
-#RUN zip -r /app/dependencies.zip .
+WORKDIR /app/dependencies
+RUN zip -r /app/dependencies.zip .
 
-#WORKDIR /app
-#RUN rm -rf /app/dependencies
+WORKDIR /app
+RUN rm -rf /app/dependencies
 
 #------------------------------------
 # Copy the application code into the container

@@ -1,36 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mariadb-deployment
+  name: postgres-deployment
   labels:
-    app: my-mariadb-deployment
+    app: my-postgres-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-mariadb
+      app: my-postgres
   template:
     metadata:
       labels:
-        app: my-mariadb
+        app: my-postgres
     spec:
-      # Mount the configmap volume
-      # This is an excerpt of deployment.spec.template.spec
       volumes:
         - name: init-volume
           configMap:
-            name: mariadb-deployment-init-configmap
+            name: postgres-deployment-init-configmap
       containers:
-        - name: my-mariadb
-          image: mariadb
+        - name: my-postgres
+          image: postgres
           volumeMounts:
             - name: init-volume
               mountPath: /docker-entrypoint-initdb.d/
-          # Set required environment variables to initialize the container
           env:
-            - name: MARIADB_ROOT_PASSWORD
-              value: "mysecretpw"
-            - name: MARIADB_DATABASE
-              value: "popular"
+            - name: POSTGRES_USER
+              value: "myuser"
+            - name: POSTGRES_PASSWORD
+              value: "mypassword"
+            - name: POSTGRES_DB
+              value: "coffee-db"
           ports:
-            - containerPort: 3306
+            - containerPort: 5432
