@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
-from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
+from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType, StructField
 
 dbUrl = 'jdbc:postgresql://my-app-postgres-service:5432/coffee_db'
 dbOptions = {
@@ -10,7 +10,7 @@ dbOptions = {
     "isolationLevel": "READ_COMMITTED"
 }
 dbSchema = 'public'
-tableName = 'customers'
+tableName = 'coffee_types'
 
 
 
@@ -57,6 +57,18 @@ def saveToDatabase(batchDataframe, batchId):
     global dbUrl, dbSchema, dbOptions
     print(f"Writing batchID {batchId} to database @ {dbUrl}")
     batchDataframe.distinct().write.jdbc(dbUrl, f"{dbSchema}.{tableName}", "overwrite", dbOptions)
+
+# test write
+schema = StructType([
+    StructField("coffee_type", StringType(), nullable=False),
+    StructField("size", StringType(), nullable=False)
+])
+
+# Create a batch DataFrame with a single entry
+data = [("Spark coffee", "S")]
+batch_df = spark.createDataFrame(data, schema)
+
+saveToDatabase(batch_df, 1)
 
 
 # Wait for termination
