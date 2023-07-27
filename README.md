@@ -1,5 +1,6 @@
-<h1>Dokumentation</h1>
-<h2>Idee der Anwendung</h2>
+# Dokumentation
+
+## Idee der Anwendung
 
 Die Kaffeekultur hat sich in den letzten Jahren rasant entwickelt und ist weit über den klassischen Filterkaffee hinausgewachsen. Espresso, Cappuccino, Latte Macchiato oder Affogato sind nur einige der vielen Kaffeevariationen, die heute in Coffeeshops auf der ganzen Welt angeboten werden. Mit der wachsenden Vielfalt der Angebote wächst jedoch auch die Herausforderung für die Coffeeshops, die Vorlieben ihrer Kunden zu verstehen und ihr Angebot entsprechend anzupassen. 
 
@@ -11,7 +12,7 @@ Diese Liste ist mehr als nur eine Aufzählung von Bestsellern. Sie ist ein leist
 
 In einer Welt, in der Daten als das neue Gold gelten, stellt diese Webapp eine Brücke zwischen traditionellem Handwerk und digitaler Innovation dar. Sie hilft Coffeeshops, in der heutigen datengetriebenen Welt erfolgreich zu sein, und verbessert gleichzeitig das Kaffeeerlebnis für Kunden weltweit. Damit setzt sie neue Maßstäbe für die Kaffeekultur des 21. Jahrhunderts.
 
-<h2>Architektur/Entwurf</h2>
+## Architektur/Entwurf
 
 Im Kontext von Big Data Messaging (Kafka) haben wir Nachrichten, die gemäß dem folgenden JSON-Schema aufgebaut sind: {coffee_type: "Latte", size: "L", number: 2}, zur Datenverarbeitung an Spark übermittelt.
 
@@ -32,40 +33,43 @@ Wir haben ein Caching-System, um die Datenbankzugriffe zu minimieren und dadurch
 
 ![Bild Architektur](./Architektur.PNG)
 
-<h2>Installation</h2>
+## Installation
 
-# Docker installieren
+### Docker installieren
 sudo apt update ; sudo apt install -y apt-transport-https docker.io
 sudo usermod -aG docker $USER && newgrp docker
 
-# Minikube installieren 
+### Minikube installieren 
 auf https://github.com/kubernetes/minikube/releases/tag/v1.30.1 Datei: minikube_1.30.1-0_amd64.deb herunterladen
 sudo dpkg -i minikube_1.30.1-0_amd64.deb
 
-# Install Helm
+### Install Helm
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt-get update ; sudo apt-get install helm
 
-# Minikube starten
+### Minikube starten
 minikube start --cpus=8 --memory=6500MB --addons=ingress
 
-# Install Strimzi Operator and Kafka Cluster
+### Install Strimzi Operator and Kafka Cluster
 helm repo add strimzi http://strimzi.io/charts/
 helm install my-kafka-operator strimzi/strimzi-kafka-operator
 kubectl apply -f https://farberg.de/talks/big-data/code/helm-kafka-operator/kafka-cluster-def.yaml
 
-# Install Hadoop
+### Install Hadoop
 helm repo add pfisterer-hadoop https://pfisterer.github.io/apache-hadoop-helm/
-
 helm install my-hadoop-cluster pfisterer-hadoop/hadoop --set hdfs.dataNode.replicas=1 --set yarn.nodeManager.replicas=1
-# Install Skaffold
+
+### Install Skaffold
 curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && sudo install skaffold /usr/local/bin/
-# Copy application to server 
+
+### Copy application to server 
 scp -r use-case/ ubuntu@IP-ADRESSE-DER-MASCHINE: (oder per VS Code kopieren)
-# Run the application 
+
+### Run the application 
 skaffold dev
-# parralel zu skaffold dev
+
+### parralel zu skaffold dev
 minikube tunnel
 
 
