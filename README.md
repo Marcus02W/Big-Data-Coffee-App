@@ -20,7 +20,7 @@ Im Kontext von Big Data Messaging (Kafka) haben wir Nachrichten, die gemäß dem
 Innerhalb von Spark haben wir die aus Kafka stammenden Informationen so aggregiert, dass die Anzahl identischer Kaffeesorten aufsummiert wird. Dieser Prozess findet innerhalb jeden einzelnen Batchs statt.
 
 ### Data Lake (Hadoop):
-Spark subscibet sich auf die Topics die Kafka erstellt.
+Spark subscribed sich auf die Topics die Kafka erstellt.
 
 ### Datenbank (MariaDB/MySQL):
 Unsere zentrale Datenbank, die auf der relationalen Datenbank MariaDB beruht, fungiert als Speichermedium für sämtliche Interaktionen innerhalb der Webapplikation. Um die Funktionalitäten unserer App zu veranschaulichen, haben wir diese bereits mit repräsentativen Beispieldaten bestückt. Zudem stellt MariaDB eine unverzichtbare Schnittstelle zwischen Apache Spark und unserer Webapplikation dar. Um unsere beliebtesten Kaffeesorten zu visualisieren, führen wir eine Selektionsabfrage durch, die über alle Chargen aggregiert.
