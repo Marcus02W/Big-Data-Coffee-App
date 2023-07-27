@@ -73,3 +73,18 @@ function sql_drop_req(){
     }
 
 }
+
+function refresh_app(){
+    const formData = new FormData();
+    formData.append("c", "refresh")
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/refresh_total");
+    xhr.send();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4){
+            response = xhr.responseText;
+            console.log(response);
+        }
+    }
+
+}

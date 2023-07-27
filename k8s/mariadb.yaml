@@ -18,11 +18,11 @@ data:
         CONSTRAINT coffee_shops_pkey PRIMARY KEY (shop_id)
     );
 
-    CREATE TABLE IF NOT EXISTS coffee_trends
+    CREATE TABLE IF NOT EXISTS popular
     (
         coffee_type VARCHAR(255) NOT NULL,
         total_quantity INTEGER NOT NULL,
-        CONSTRAINT coffee_trends_pkey PRIMARY KEY (coffee_type, size)
+        CONSTRAINT popular_pkey PRIMARY KEY (coffee_type)
     );
 
     CREATE TABLE IF NOT EXISTS coffee_shops_coffee_types

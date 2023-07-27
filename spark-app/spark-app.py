@@ -2,9 +2,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 
-dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306/popular'
-dbOptions = {"user": "root", "password": "mysecretpw"} #"driver": "org.mariadb.jdbc.Driver"}
-dbSchema = 'coffee_trends'
+dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306/popular' #
+dbOptions = {"user": "root", "password": "mysecretpw"}# "driver": "org.mariadb.jdbc.Driver", "isolationLevel":"READ_COMMITED"}
+dbSchema = 'popular'
 
 windowDuration = '1 minute'
 slidingDuration = '1 minute'
@@ -59,7 +59,7 @@ trackingMessages = kafkaMessages.select(
 
 # Example Part 4
 # Compute most popular slides
-coffee_trends = trackingMessages.groupBy(
+popular = trackingMessages.groupBy(
     window(
         column("parsed_timestamp"),
         windowDuration,
@@ -72,7 +72,7 @@ coffee_trends = trackingMessages.groupBy(
 
 # Example Part 5
 # Start running the query; print running counts to the console
-consoleDump = coffee_trends \
+consoleDump = popular \
     .writeStream \
     .outputMode("update") \
     .format("console") \
@@ -81,15 +81,15 @@ consoleDump = coffee_trends \
 # Example Part 6
 def saveToDatabase(batchDataframe, batchId):
     global dbUrl, dbSchema, dbOptions
-    #print(f"Writing batchID {batchId} to database @ {dbUrl}")
-    # batchDataframe.distinct().write.format("jdbc").mode("overwrite").option("driver", "org.mariadb.jdbc.Driver").option("url","jdbc:mysql://my-app-mariadb-service:3306/popular?user=root&password=mysecretpw").option("dbtable","popular").option("provider", "org.apache.spark.sql.execution.datasources.jdbc.DriverRegistry").save()
+    print(f"Writing batchID {batchId} to database @ {dbUrl}")
+    #batchDataframe.distinct().write.format("jdbc").mode("overwrite").option("driver", "org.mariadb.jdbc.Driver").option("url","jdbc:mysql://my-app-mariadb-service:3306/popular?user=root&password=mysecretpw").option("dbtable","popular").option("provider", "org.apache.spark.sql.execution.datasources.jdbc.DriverRegistry").save()
     #print(f"batch{batchId}")
 
     batchDataframe.distinct().write.jdbc(dbUrl, dbSchema, "overwrite", dbOptions)
 
 
 # Example Part 7
-dbInsertStream = coffee_trends \
+dbInsertStream = popular \
     .select(column('coffee_type'), column('total_quantity')) \
     .writeStream \
     .outputMode("complete") \

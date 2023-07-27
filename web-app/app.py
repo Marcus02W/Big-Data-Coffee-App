@@ -8,6 +8,7 @@ import pymysql
 from pymemcache.client import base as memcache
 import pandas as pd
 from datetime import datetime, date
+import sys
 
 app = Flask(__name__, template_folder='templateFiles', static_folder='staticFiles')
 
@@ -512,6 +513,13 @@ def sql_drop_req():
         html_df="Please select a table"
         
     return html_df
+
+@app.route("/refresh_total", methods=["POST"])
+def do_refresh():
+    data=request.form["c"]
+    sys.stdout.flush()
+    raise SystemExit("A")
+    return "d"
 
 
 
