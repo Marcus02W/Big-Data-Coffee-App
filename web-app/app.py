@@ -463,7 +463,7 @@ def process_order():
     execute_query(insertion_query)
 
     for row in order_items_data:
-        send_tracking_message({"mission": row[0], "timestamp": int(time.time())})
+        send_tracking_message({"coffee_type": row[0], "size": row[1], "quantity": row[2], "timestamp": int(time.time())})
         insertion_query2 = f"insert into orderitem (coffee_type, size, nummer, order_id) values {str(tuple(row))};"
         execute_query(insertion_query2)
     return insertion_query2

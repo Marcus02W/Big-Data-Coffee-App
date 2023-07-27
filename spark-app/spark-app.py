@@ -4,7 +4,7 @@ from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
 
 dbUrl = 'jdbc:mysql://my-app-mariadb-service:3306/popular'
 dbOptions = {"user": "root", "password": "mysecretpw"} #"driver": "org.mariadb.jdbc.Driver"}
-dbSchema = 'popular'
+dbSchema = 'coffee_trends'
 
 windowDuration = '1 minute'
 slidingDuration = '1 minute'
@@ -30,7 +30,9 @@ kafkaMessages = spark \
 
 # Define schema of tracking data
 trackingMessageSchema = StructType() \
-    .add("mission", StringType()) \
+    .add("coffee_type", StringType()) \
+    .add("size", StringType()) \
+    .add("quantity", IntegerType()) \
     .add("timestamp", IntegerType())
 
 # Example Part 3
@@ -50,25 +52,27 @@ trackingMessages = kafkaMessages.select(
     # Select all JSON fields
     column("json.*")
 ) \
-    .withColumnRenamed('json.mission', 'mission') \
+    .withColumnRenamed('json.coffee_type', 'coffee_type') \
+    .withColumnRenamed('json.size', 'size') \
+    .withColumnRenamed('json.quantity', 'quantity') \
     .withWatermark("parsed_timestamp", windowDuration)
 
 # Example Part 4
 # Compute most popular slides
-popular = trackingMessages.groupBy(
+coffee_trends = trackingMessages.groupBy(
     window(
         column("parsed_timestamp"),
         windowDuration,
         slidingDuration
     ),
-    column("mission")
-).count() \
+    column("coffee_type")
+).agg(sum(column("quantity")).alias("total_quantity")) \
  .withColumnRenamed('window.start', 'window_end') \
  .withColumnRenamed('window.end', 'window_start') \
 
 # Example Part 5
 # Start running the query; print running counts to the console
-consoleDump = popular \
+consoleDump = coffee_trends \
     .writeStream \
     .outputMode("update") \
     .format("console") \
@@ -79,14 +83,14 @@ def saveToDatabase(batchDataframe, batchId):
     global dbUrl, dbSchema, dbOptions
     #print(f"Writing batchID {batchId} to database @ {dbUrl}")
     # batchDataframe.distinct().write.format("jdbc").mode("overwrite").option("driver", "org.mariadb.jdbc.Driver").option("url","jdbc:mysql://my-app-mariadb-service:3306/popular?user=root&password=mysecretpw").option("dbtable","popular").option("provider", "org.apache.spark.sql.execution.datasources.jdbc.DriverRegistry").save()
-    print(f"batch{batchId}")
+    #print(f"batch{batchId}")
 
     batchDataframe.distinct().write.jdbc(dbUrl, dbSchema, "overwrite", dbOptions)
 
 
 # Example Part 7
-dbInsertStream = popular \
-    .select(column('mission'), column('count')) \
+dbInsertStream = coffee_trends \
+    .select(column('coffee_type'), column('total_quantity')) \
     .writeStream \
     .outputMode("complete") \
     .foreachBatch(saveToDatabase) \
