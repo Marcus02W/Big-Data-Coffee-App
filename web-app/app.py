@@ -491,7 +491,7 @@ def sql_tabel():
             df = pd.read_sql_query(sql_querry, db_connection)
             html_df=df.to_html()
         elif sql_querry=="popular":
-            sql_querry=f"Select * From {sql_querry} group by coffee_type;"
+            sql_querry=f"Select coffee_type, sum(total_quantity) as total_sum From {sql_querry} group by coffee_type order by total_sum desc;"
             df = pd.read_sql_query(sql_querry, db_connection)
             html_df=df.to_html()
         else:
@@ -501,7 +501,7 @@ def sql_tabel():
 
 @app.route("/sql_drop_req", methods=["POST"])
 def sql_drop_req():
-    # os.kill(os.getpid(),signal.SIGINT) # development test
+    os.kill(os.getpid(),signal.SIGINT) # development test
     # drop_req =request.form["drop_req"]
     
     # if drop_req != "none":
@@ -543,7 +543,7 @@ def sql_drop_req():
 
 
 # # Main method
-if True:
+if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=options["port"])
 
 
