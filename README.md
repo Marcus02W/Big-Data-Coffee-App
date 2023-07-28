@@ -73,3 +73,18 @@ skaffold dev
 minikube tunnel
 
 
+## Challenges
+Aufgrund des sehr umfangreichen Umbaus des Standardusecases sind im Entwicklungsprozess kontinuierlich Herausforderungen aufgetreten.
+Zunächst erwies sich die Umstellung unserer gesamten Flask App von Postgres auf MySQL als deutlich zeitintensiver als zunächst angenommen,
+da neben den Connection Parametern auch einige Änderungen in der Syntax der Querys und (materialized) views vorgenommen werden mussten.
+
+Auch die Integration der für docker-compose entwickelten Flask App in Kubernetes gestaltete sich schwierig, da wir eine Fusion zwischen unserer Flask App und der bestehenden Use-Case-Schablone bewerkstelligen wollten, um die yaml Dateien und die grundlegende Struktur des Clusters übernehmen zu können.
+Dies ist uns letztendlich über einen Umbau aller Connectoren der nodejs Schablone in Python auch gelungen.
+
+Aus zeitlichen Gründen ist es uns nicht vollständig gelungen die memcache Logik aus dem nodejs in unserer Flaskapp zu integrieren, da uns auch diese vor einige Probleme stellte, Ansätze sind jedoch vorhanden.
+
+Vor das größte Problem stellte uns jedoch die Tatsache, dass unsere Batches zwar korrekt von Spark in die Datenbank geschrieben wurden, jedoch nicht in der Flask App sichtbar waren. Nach zeitintensivem Debugging sind wir zu der Erkenntnis gekommen, dass dies mit dem Flask Development Server zusammenhängt. Denn dieser unterstützt kein dynamischen Reloading der Flask Applikation bei externen Events wie Datenbankänderungen.
+Trotzt zahlreicher Fixversuche (im Code teils noch auskommentiert vorhanden) ist es uns leider nicht ganz gelungen das Problem zu beheben. Für einen vollständigen Fix wäre wohl der Wechsel auf einen Production Flask Server notwendig.
+Dennoch konnten wir durch einen Workaround die populärsten Kaffeesorten in der App anzeigen lassen. Denn durch marginale Änderungen in Files der Flask App lässt sich ein Reload manuell triggern, was dann auch das Anzeigen der Daten in korrekter Weise ermöglicht.
+
+
