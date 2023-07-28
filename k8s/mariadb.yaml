@@ -1,0 +1,929 @@
+#Begin: Configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mariadb-deployment-init-configmap
+data:
+  mariadb-init.sql: |
+    SET GLOBAL sql_mode = 'ANSI_QUOTES';
+    CREATE TABLE IF NOT EXISTS coffee_shops
+    (
+        shop_id integer NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        country VARCHAR(255) NOT NULL,
+        city VARCHAR(255) NOT NULL,
+        street VARCHAR(255) NOT NULL,
+        owner_firstname VARCHAR(255) NOT NULL,
+        owner_lastname VARCHAR(255) NOT NULL,
+        CONSTRAINT coffee_shops_pkey PRIMARY KEY (shop_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS popular
+    (
+        coffee_type VARCHAR(255) NOT NULL,
+        total_quantity INTEGER NOT NULL,
+        CONSTRAINT popular_pkey PRIMARY KEY (coffee_type)
+    );
+
+    CREATE TABLE IF NOT EXISTS coffee_shops_coffee_types
+    (
+        shop_id integer NOT NULL,
+        coffee_type VARCHAR(255) NOT NULL,
+        size VARCHAR(255) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS coffee_types
+    (
+        coffee_type VARCHAR(255) NOT NULL,
+        size VARCHAR(255) NOT NULL,
+        CONSTRAINT coffee_types_pkey PRIMARY KEY (coffee_type, size)
+    );
+
+    CREATE TABLE IF NOT EXISTS customer_login
+    (
+        customer_id integer NOT NULL,
+        customer_password VARCHAR(255) NOT NULL,
+        CONSTRAINT customer_login_pkey PRIMARY KEY (customer_id, customer_password)
+    );
+
+    CREATE TABLE IF NOT EXISTS customers
+    (
+        customer_id integer NOT NULL,
+        customer_firstname VARCHAR(255),
+        customer_lastname VARCHAR(255),
+        CONSTRAINT customers_pkey PRIMARY KEY (customer_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS orderitem
+    (
+        coffee_type VARCHAR(255) NOT NULL,
+        size VARCHAR(255) NOT NULL,
+        nummer integer,
+        order_id integer NOT NULL,
+        CONSTRAINT orderitem_pkey PRIMARY KEY (coffee_type, size, order_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS orders
+    (
+        order_id integer NOT NULL,
+        shop_id integer,
+        customer_id integer,
+        order_date integer,
+        CONSTRAINT order_pkey PRIMARY KEY (order_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS ratings
+    (
+        customer_id integer NOT NULL,
+        shop_id integer NOT NULL,
+        score integer,
+        CONSTRAINT ratings_pkey PRIMARY KEY (customer_id, shop_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS shop_login
+    (
+        shop_password VARCHAR(255) NOT NULL,
+        shop_id integer NOT NULL,
+        CONSTRAINT shop_login_pkey PRIMARY KEY (shop_password, shop_id)
+    );
+
+    ALTER TABLE IF EXISTS coffee_shops_coffee_types
+        ADD CONSTRAINT shop_connector_mn FOREIGN KEY (shop_id)
+        REFERENCES coffee_shops (shop_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS coffee_shops_coffee_types
+        ADD CONSTRAINT type_connector_mn FOREIGN KEY (coffee_type, size)
+        REFERENCES coffee_types (coffee_type, size) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS customer_login
+        ADD CONSTRAINT customer_connector_p FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS orderitem
+        ADD CONSTRAINT order_connector FOREIGN KEY (order_id)
+        REFERENCES orders (order_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS orderitem
+        ADD CONSTRAINT type_connector FOREIGN KEY (coffee_type, size)
+        REFERENCES coffee_types (coffee_type, size) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS orders
+        ADD CONSTRAINT customer_connector2 FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS orders
+        ADD CONSTRAINT shop_connector2 FOREIGN KEY (shop_id)
+        REFERENCES coffee_shops (shop_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS ratings
+        ADD CONSTRAINT customer_connector FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS ratings
+        ADD CONSTRAINT shop_connector FOREIGN KEY (shop_id)
+        REFERENCES coffee_shops (shop_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    ALTER TABLE IF EXISTS shop_login
+        ADD CONSTRAINT shop_connector_p FOREIGN KEY (shop_id)
+        REFERENCES coffee_shops (shop_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Espresso', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Espresso', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Espresso', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Americano', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Americano', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Americano', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Latte', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Latte', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Latte', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Cappuccino', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Cappuccino', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Cappuccino', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Macchiato', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Macchiato', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Macchiato', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Mocha', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Mocha', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Mocha', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Flat White', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Flat White', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Flat White', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Filterkaffee', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Filterkaffee', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Filterkaffee', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Frappe', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Frappe', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Frappe', 'L');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Affogato', 'S');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Affogato', 'M');
+    INSERT INTO coffee_types (coffee_type, size) VALUES ('Affogato', 'L');
+
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (1, 'Blue Bottle Coffee', 'USA', 'Oakland', '300 Webster St', 'James', 'Freeman');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (2, 'Starbucks', 'USA', 'Seattle', '2401 Utah Ave S', 'Howard', 'Schultz');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (3, 'Café de Flore', 'Frankreich', 'Paris', '172 Boulevard Saint-Germain', 'Fernand', 'Petiot');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (4, 'The Coffee Academics', 'Hongkong', 'Hongkong', '38 Yiu Wa St', 'Jennifer', 'Liu');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (5, 'Stumptown Coffee Roasters', 'USA', 'Portland', '128 SW 3rd Ave', 'Duane', 'Sorenson');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (6, 'Tim Wendelboe', 'Norwegen', 'Oslo', 'Grüners gate 1', 'Tim', 'Wendelboe');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (7, 'Intelligentsia Coffee', 'USA', 'Chicago', '53 W Jackson Blvd', 'Doug', 'Zell');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (8, 'Coffee Collective', 'Dänemark', 'Kopenhagen', 'Jægersborggade 57', 'Casper', 'Engel');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (9, 'Toby''s Estate', 'USA', 'Brooklyn', '125 N 6th St', 'Toby', 'Smith');
+    INSERT INTO coffee_shops (shop_id, name, country, city, street, owner_firstname, owner_lastname) VALUES (10, 'Philz Coffee', 'USA', 'San Francisco', '748 Van Ness Ave', 'Phil', 'Jaber');
+
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (1, 'abc123');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (2, 'def456');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (3, 'ghi789');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (4, 'jkl012');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (5, 'mno345');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (6, 'pqr678');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (7, 'stu901');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (8, 'vwx234');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (9, 'yza567');
+    INSERT INTO shop_login (shop_id, shop_password) VALUES (10, 'bcd890');
+
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (1, 'Jeff', 'Bezos');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (2, 'Elon', 'Musk');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (3, 'Bernard', 'Arnault');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (4, 'Bill', 'Gates');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (5, 'Mark', 'Zuckerberg');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (6, 'Françoise', 'Bettencourt Meyers');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (7, 'Alice', 'Walton');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (8, 'MacKenzie', 'Scott');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (9, 'Julia', 'Koch');
+    INSERT INTO customers (customer_id, customer_firstname, customer_lastname) VALUES (10, 'Jacqueline', 'Mars');
+
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (1, '123456');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (2, 'password');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (3, '123456789');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (4, 'qwerty');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (5, '1234567');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (6, '12345678');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (7, '12345');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (8, 'admin');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (9, '123123');
+    INSERT INTO customer_login (customer_id, customer_password) VALUES (10, 'letmein');
+
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (1, 7, 2, '20220201');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (2, 4, 6, '20220202');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (3, 9, 3, '20220203');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (4, 3, 8, '20220204');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (5, 5, 9, '20220205');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (6, 8, 7, '20220206');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (7, 2, 10, '20220207');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (8, 1, 1, '20220208');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (9, 10, 4,  '20220209');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (10, 6, 5,  '20220210');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (11, 4, 1,  '20220211');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (12, 3, 6,  '20220212');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (13, 8, 3,  '20220213');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (14, 7, 8,  '20220214');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (15, 5, 9,  '20220215');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (16, 2, 7,  '20220216');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (17, 1, 10,  '20220217');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (18, 9, 2,  '20220218');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (19, 10, 5,  '20220219');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (20, 6, 4,  '20220220');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (21, 5, 2,  '20220221');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (22, 8, 7,  '20220222');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (23, 7, 1,  '20220223');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (24, 4, 6,  '20220224');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (25, 9, 8,  '20220225');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (26, 3, 10,  '20220226');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (27, 5, 3,  '20220227');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (28, 2, 9,  '20220228');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (29, 1, 4,  '20220301');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (30, 10, 5,  '20220302');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (31, 6, 1,  '20220303');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (32, 4, 3,  '20220304');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (33, 8, 7,  '20220305');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (34, 7, 8,  '20220306');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (35, 5, 10,  '20220307');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (36, 2, 2,  '20220308');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (37, 1, 6,  '20220309');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (38, 9, 4,  '20220310');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (39, 10, 9,  '20220311');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (40, 6, 7,  '20220312');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (41, 4, 8,  '20220313');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (42, 3, 1,  '20220314');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (43, 8, 3,  '20220315');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (44, 7, 10,  '20220316');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (45, 5, 2,  '20220317');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (46, 2, 5,  '20220318');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (47, 1, 6,  '20220319');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (48, 9, 4,  '20220320');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (49, 10, 7,  '20220321');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (50, 6, 9,  '20220322');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (51, 4, 10,  '20220323');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (52, 3, 2,  '20220324');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (53, 8, 1,  '20220325');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (54, 7, 5,  '20220326');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (55, 5, 8,  '20220327');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (56, 2, 6,  '20220328');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (57, 1, 3,  '20220329');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (58, 9, 7,  '20220330');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (59, 10, 4,  '20220331');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (60, 6, 9,  '20220401');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (61, 4, 7,  '20220402');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (62, 3, 5,  '20220403');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (63, 8, 2,  '20220404');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (64, 7, 6,  '20220405');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (65, 5, 1,  '20220406');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (66, 2, 10,  '20220407');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (67, 1, 4,  '20220408');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (68, 9, 8,  '20220409');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (69, 10, 3,  '20220410');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (70, 6, 5,  '20220411');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (71, 4, 2,  '20220412');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (72, 3, 7,  '20220413');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (73, 8, 1,  '20220414');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (74, 7, 9,  '20220415');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (75, 5, 6,  '20220416');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (76, 2, 4,  '20220417');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (77, 1, 10,  '20220418');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (78, 9, 3,  '20220419');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (79, 10, 7,  '20220420');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (80, 6, 1,  '20220421');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (81, 4, 6,  '20220422');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (82, 3, 8,  '20220423');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (83, 8, 2,  '20220424');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (84, 7, 10,  '20220425');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (85, 5, 5,  '20220426');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (86, 2, 9,  '20220427');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (87, 1, 3,  '20220428');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (88, 9, 7,  '20220429');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (89, 10, 4,  '20220430');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (90, 6, 9,  '20220501');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (91, 4, 7,  '20220502');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (92, 3, 5,  '20220503');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (93, 8, 2,  '20220504');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (94, 7, 6,  '20220505');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (95, 5, 1,  '20220506');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (96, 2, 10,  '20220507');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (97, 1, 4,  '20220508');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (98, 9, 8,  '20220509');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (99, 10, 3,  '20220510');
+    INSERT INTO orders (order_id, shop_id, customer_id, order_date) VALUES (100, 6, 5,  '20220511');
+
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (1, 3, 'Macchiato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (31, 3, 'Macchiato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (61, 3, 'Macchiato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (91, 3, 'Macchiato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (2, 2, 'Cappuccino', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (32, 2, 'Cappuccino', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (62, 2, 'Cappuccino', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (92, 2, 'Cappuccino', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (3, 5, 'Frappe', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (33, 5, 'Frappe', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (63, 5, 'Frappe', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (93, 5, 'Frappe', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (4, 4, 'Americano', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (34, 4, 'Americano', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (64, 4, 'Americano', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (94, 4, 'Americano', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (5, 1, 'Flat White', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (35, 1, 'Flat White', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (65, 1, 'Flat White', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (95, 1, 'Flat White', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (6, 3, 'Espresso', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (36, 3, 'Espresso', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (66, 3, 'Espresso', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (96, 3, 'Espresso', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (7, 2, 'Cappuccino', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (37, 2, 'Cappuccino', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (67, 2, 'Cappuccino', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (97, 2, 'Cappuccino', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (8, 5, 'Flat White', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (38, 5, 'Flat White', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (68, 5, 'Flat White', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (98, 5, 'Flat White', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (9, 4, 'Latte', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (39, 4, 'Latte', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (69, 4, 'Latte', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (99, 4, 'Latte', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (10, 1, 'Affogato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (40, 1, 'Affogato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (70, 1, 'Affogato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (100, 1, 'Affogato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (11, 3, 'Espresso', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (41, 3, 'Espresso', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (71, 3, 'Espresso', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (12, 2, 'Frappe', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (42, 2, 'Frappe', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (72, 2, 'Frappe', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (13, 5, 'Americano', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (43, 5, 'Americano', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (73, 5, 'Americano', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (14, 4, 'Filterkaffee', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (44, 4, 'Filterkaffee', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (74, 4, 'Filterkaffee', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (15, 1, 'Latte', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (45, 1, 'Latte', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (75, 1, 'Latte', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (16, 3, 'Affogato', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (46, 3, 'Affogato', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (76, 3, 'Affogato', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (17, 2, 'Mocha', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (47, 2, 'Mocha', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (77, 2, 'Mocha', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (18, 5, 'Espresso', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (48, 5, 'Espresso', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (78, 5, 'Espresso', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (19, 4, 'Frappe', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (49, 4, 'Frappe', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (79, 4, 'Frappe', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (20, 1, 'Latte', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (50, 1, 'Latte', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (80, 1, 'Latte', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (21, 3, 'Affogato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (51, 3, 'Affogato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (81, 3, 'Affogato', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (22, 2, 'Macchiato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (52, 2, 'Macchiato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (82, 2, 'Macchiato', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (23, 5, 'Flat White', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (53, 5, 'Flat White', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (83, 5, 'Flat White', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (24, 4, 'Americano', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (54, 4, 'Americano', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (84, 4, 'Americano', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (25, 1, 'Mocha', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (55, 1, 'Mocha', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (85, 1, 'Mocha', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (26, 3, 'Filterkaffee', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (56, 3, 'Filterkaffee', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (86, 3, 'Filterkaffee', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (27, 2, 'Cappuccino', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (57, 2, 'Cappuccino', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (87, 2, 'Cappuccino', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (28, 5, 'Mocha', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (58, 5, 'Mocha', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (88, 5, 'Mocha', 'L');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (29, 4, 'Filterkaffee', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (59, 4, 'Filterkaffee', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (89, 4, 'Filterkaffee', 'S');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (30, 1, 'Macchiato', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (60, 1, 'Macchiato', 'M');
+    INSERT INTO orderitem (order_id, nummer, coffee_type, size) VALUES (90, 1, 'Macchiato', 'M');
+
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 1, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 2, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 3, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 4, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 5, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 6, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 8, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 9, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (1, 10, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 1, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 2, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 3, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 4, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 5, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 6, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 7, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 8, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 9, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (2, 10, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 1, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 2, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 3, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 4, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 5, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 6, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 8, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 9, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (3, 10, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 1, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 2, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 3, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 4, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 5, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 6, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 8, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 9, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (4, 10, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 1, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 2, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 3, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 4, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 5, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 6, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 8, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 9, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (5, 10, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 1, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 2, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 3, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 4, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 5, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 6, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 7, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 8, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 9, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (6, 10, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 1, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 2, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 3, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 4, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 5, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 6, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 8, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 9, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (7, 10, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 1, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 2, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 3, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 4, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 5, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 6, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 7, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 8, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 9, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (8, 10, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 1, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 2, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 3, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 4, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 5, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 6, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 7, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 8, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 9, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (9, 10, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 1, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 2, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 3, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 4, 3);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 5, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 6, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 7, 2);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 8, 4);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 9, 5);
+    INSERT INTO ratings (customer_id, shop_id, score) VALUES (10, 10, 3);
+
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Espresso', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Espresso', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Espresso', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Americano', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Americano', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Americano', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Latte', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Latte', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Latte', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Cappuccino', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Cappuccino', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Cappuccino', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Macchiato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Macchiato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Macchiato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Mocha', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Mocha', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Mocha', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Flat White', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Flat White', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Flat White', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Filterkaffee', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Filterkaffee', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Filterkaffee', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Frappe', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Frappe', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Frappe', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Affogato', 'S');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Affogato', 'M');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (1, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (2, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (3, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (4, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (5, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (6, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (7, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (8, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (9, 'Affogato', 'L');
+    INSERT INTO coffee_shops_coffee_types (shop_id, coffee_type, size) VALUES (10, 'Affogato', 'L');
+    
+    CREATE VIEW average_rating_mat
+    AS
+    SELECT 
+        coffee_shops.shop_id, 
+        coffee_shops.name, 
+        AVG(ratings.score) as average_score
+    FROM 
+        coffee_shops
+    JOIN 
+        ratings ON coffee_shops.shop_id = ratings.shop_id
+    GROUP BY 
+        coffee_shops.shop_id;
+    
+    CREATE OR REPLACE VIEW worst_shop_ratings AS
+    WITH min_ratings AS (
+        SELECT 
+            shop_id,
+            MIN(score) AS min_score
+        FROM 
+            ratings
+        GROUP BY 
+            shop_id
+    )
+    SELECT 
+        cs.name AS shop_name,
+        c.customer_firstname,
+        c.customer_lastname,
+        mr.min_score AS rating
+    FROM 
+        ratings r
+    JOIN 
+        min_ratings mr ON r.shop_id = mr.shop_id AND r.score = mr.min_score
+    JOIN 
+        customers c ON r.customer_id = c.customer_id
+    JOIN 
+        coffee_shops cs ON r.shop_id = cs.shop_id;
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  labels:
+    app: my-mariadb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-mariadb
+  template:
+    metadata:
+      labels:
+        app: my-mariadb
+    spec:
+      # Mount the configmap volume
+      # This is an excerpt of deployment.spec.template.spec
+      volumes:
+        - name: init-volume
+          configMap:
+            name: mariadb-deployment-init-configmap
+      containers:
+        - name: my-mariadb
+          image: mariadb
+          volumeMounts:
+            - name: init-volume
+              mountPath: /docker-entrypoint-initdb.d/
+          # Set required environment variables to initialize the container
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: "mysecretpw"
+            - name: MARIADB_DATABASE
+              value: "popular"
+          ports:
+            - containerPort: 3306
+
+---
+#Begin: Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-mariadb-service
+spec:
+  selector:
+    app: my-mariadb
+  ports:
+    - name: mariadb-proto
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+#End: Service
