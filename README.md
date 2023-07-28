@@ -29,7 +29,7 @@ Unsere zentrale Datenbank, die auf der relationalen Datenbank MariaDB beruht, fu
 Unsere auf Flask basierende Webapplikation bildet das Herzstück unserer Anwendung und agiert als umfassende Kaffeedatenbank mit einem eingebetteten Anmeldesystem für sowohl Kunden als auch Coffeeshop-Inhaber. Zur Erweiterung ihres Leistungsspektrums haben wir sie mit einer Big Data-Komponente bereichert, welche alle Bestllungen dokumentiert. Dieser ausgebaute Bereich der Applikation ist durch die Administrationsseite zugänglich und kann unkompliziert über ein Dropdown-Menü gesteuert werden. Den überwiegenden Teil dieser Anwendung hatten wir bereits im Rahmen eines früheren Universitätsprojekts entwickelt, wobei der entscheidende Unterschied darin lag, dass wir eine Postgres-Datenbank verwendet hatten. Dies erforderte einen erheblichen Anpassungsaufwand, einschließlich der Modifikation des umfangreichen SQL-Codes sowie der vollständigen Umstrukturierung der Flask-App und der Javascript-Dateien, da die Datenbankantworten ein anderes Format aufwiesen und wir alternative Datenbank-Connectoren benötigten.
 
 ### Cache (pymemcache):
-Wir haben ein Caching-System, um die Datenbankzugriffe zu minimieren und dadurch die Performance unserer App zu steigern. Da wir mit einer Flask App Arbeiten verwenden wir hierbei das Modul pymemcache.
+Wir haben versucht ein Caching-System zu implementieren, um die Datenbankzugriffe zu minimieren und dadurch die Performance unserer App zu steigern. Da wir mit einer Flask App Arbeiten verwenden wir hierbei das Modul pymemcache.
 
 ![Bild Architektur](./Architektur.PNG)
 
